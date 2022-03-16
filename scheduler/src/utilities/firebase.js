@@ -3,6 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { useState, useEffect } from 'react';
 import { getDatabase, ref, onValue, set } from 'firebase/database';
+import { getAuth, GoogleAuthProvider, onIdTokenChanged, signInWithPopup, signOut } from 'firebase/auth';
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -52,3 +53,20 @@ export const useData = (path, transform) => {
 export const setData = (path, value) => (
     set(ref(database, path), value)
   );
+
+export const signInWithGoogle = () => {
+    signInWithPopup(getAuth(), new GoogleAuthProvider());
+  };
+
+const firebaseSignOut = () => signOut(getAuth());
+
+export const useUserState = () => {
+    const [user, setUser] = useState();
+  
+    useEffect(() => {
+      onIdTokenChanged(getAuth(), setUser);
+    }, []);
+  
+    return [user];
+  };
+export { firebaseSignOut as signOut };
